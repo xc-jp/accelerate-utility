@@ -1,0 +1,5 @@
+resolver: lts-12.9
+packages:
+- .
+extra-deps:
+  - accelerate-1.2.0.0
