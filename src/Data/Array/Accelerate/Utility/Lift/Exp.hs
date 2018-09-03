@@ -1,6 +1,7 @@
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE TypeFamilies         #-}
+{-# LANGUAGE TypeOperators        #-}
+{-# LANGUAGE UndecidableInstances #-}
 module Data.Array.Accelerate.Utility.Lift.Exp (
    Unlift,
    Unlifted,
@@ -23,13 +24,13 @@ module Data.Array.Accelerate.Utility.Lift.Exp (
    indexCons,
    ) where
 
+import           Data.Array.Accelerate              ((:.) ((:.)))
+import qualified Data.Array.Accelerate              as A
 import qualified Data.Array.Accelerate.Data.Complex as Complex
-import qualified Data.Array.Accelerate as A
-import Data.Complex (Complex((:+)))
-import Data.Array.Accelerate ((:.)((:.)))
+import           Data.Complex                       (Complex ((:+)))
 
-import qualified Data.Tuple.HT as Tuple
-import Data.Tuple.HT (mapTriple)
+import           Data.Tuple.HT                      (mapTriple)
+import qualified Data.Tuple.HT                      as Tuple
 
 
 {- |
@@ -144,8 +145,7 @@ instance (Unlift pa, A.Slice (Tuple pa), int ~ Exp Int) => Unlift (pa :. int) wh
    unlift (pa:.pb) ab =
       (unlift pa $ A.indexTail ab) :. (unlift pb $ A.indexHead ab)
 
-
-instance (Unlift p) => Unlift (Complex p) where
+instance (Unlift p, A.Elt (Complex (Tuple p))) => Unlift (Complex p) where
    type Unlifted (Complex p) = Complex (Unlifted p)
    type Tuple (Complex p) = Complex (Tuple p)
    unlift (preal:+pimag) z =
